@@ -1,0 +1,31 @@
+{
+  "name": "fizzmod-final",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon app.js",
+    "start-users": "nodemon users.js",
+    "start-messages": "nodemon messages.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/martinkluck/fizzmod-final.git"
+  },
+  "keywords": [],
+  "author": "Martin Gustavo Kluck",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/martinkluck/fizzmod-final/issues"
+  },
+  "homepage": "https://github.com/martinkluck/fizzmod-final#readme",
+  "dependencies": {
+    "mysql": "^2.16.0",
+    "node-fetch": "^2.3.0",
+    "socket.io": "^2.2.0",
+    "socket.io-client": "^2.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.10"
+  }
+}
