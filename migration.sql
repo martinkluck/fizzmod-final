@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS `users`(
     UNIQUE INDEX `users_email_unique` (`email`), 
     UNIQUE INDEX `users_username_unique` (`username`),
 	INDEX `posts_user_status_id_foreign` (`user_status_id`),
-	CONSTRAINT `posts_user_status_id_foreign` FOREIGN KEY (`user_status_id`) REFERENCES `user_status` (`id`) ON UPDATE CASCADE ON DELETE CASCADE
+	CONSTRAINT `posts_user_status_id_foreign` FOREIGN KEY (`user_status_id`) REFERENCES `user_status` (`id`) ON UPDATE CASCADE ON DELETE RESTRICT
 );
 
 CREATE TABLE IF NOT EXISTS `message_status`( 
@@ -40,6 +40,6 @@ CREATE TABLE IF NOT EXISTS `messages`(
     PRIMARY KEY(id),
 	INDEX `posts_user_id_foreign` (`user_id`),
 	INDEX `posts_message_status_id_foreign` (`message_status_id`),
-	CONSTRAINT `posts_message_status_id_foreign` FOREIGN KEY (`message_status_id`) REFERENCES `message_status` (`id`) ON UPDATE CASCADE ON DELETE CASCADE,
-	CONSTRAINT `posts_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON UPDATE CASCADE ON DELETE CASCADE
+	CONSTRAINT `posts_message_status_id_foreign` FOREIGN KEY (`message_status_id`) REFERENCES `message_status` (`id`) ON UPDATE CASCADE ON DELETE RESTRICT,
+	CONSTRAINT `posts_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON UPDATE CASCADE ON DELETE RESTRICT
 );

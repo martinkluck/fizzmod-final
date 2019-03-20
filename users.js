@@ -22,7 +22,7 @@ const server = http.createServer((req, res) => {
             if (error){
                 console.log(error)
                 res.writeHead(500, 'Internal server Error')
-                res.end(err.message)
+                res.end(error.message)
             };
             console.log(results);
             let result = new Buffer(results);
@@ -34,15 +34,33 @@ const server = http.createServer((req, res) => {
         connection.end()
     }
     if(method == 'POST'){
+        let r = ''
         req.on('data', function (data) {
-            let newUser = parse(data)
-            console.log(JSON.stringify(newUser))
+            let save = JSON.parse(data.toString())
+            let date = new Date()
+            let timestamp = date.getFullYear() + '-' + date.getMonth() + '-' + date.getDay() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()
+            connection.connect()
+            connection.query('INSERT INTO `users` (`username`,`firstname`,`lastname`,`email`,`created_at`,`user_status_id`) values (?,?,?,?,?,?)',[save.username,save.firstname,save.lastname,save.email,timestamp,1], function (error, results, fields) {
+                if (error) {
+                    console.log(error)
+                    res.writeHead(500, 'Internal server Error')
+                    res.end(error.message)
+                    r = JSON.stringify(error.message)
+                };
+                console.log(results);
+                r = JSON.stringify(results)
+                /* res.writeHead(200, {
+                    "content-type": "text/html"
+                })
+                res.end(JSON.stringify(results)) */
+            })
+            connection.end()
         })
         req.on('end', function () {
             res.writeHead(200, {
                 'Content-Type': 'text/html'
             })
-            res.end('post received')
+            res.end(r)
         })
     }
 })

@@ -2,6 +2,7 @@ const http = require('http')
 const fs = require("fs")
 const Url = require("url")
 const fetch = require('node-fetch')
+var { parse } = require('querystring');
 
 const server = http.createServer((req, res) => {
     let {
@@ -45,11 +46,17 @@ const server = http.createServer((req, res) => {
     if(method === 'POST'){
         // console.log(Url.parse(url, true))
         if (url == '/users') {
-            req.on('data', function (data) {
-                console.log(data.toString())
+            let result = '';
+            req.on('data', chunk => {
+                result = chunk.toString()
+            })
+            req.on('end', () => {
                 fetch('http://localhost:9000', {
                         method: 'POST',
-                        body: data
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: result
                     })
                     .then(data => {
                         console.log(data);
@@ -57,8 +64,7 @@ const server = http.createServer((req, res) => {
                     .catch(error => {
                         console.log(error)
                     })
-            })
-            req.on('end', function () {
+                console.log(parse(result))
                 res.writeHead(200, {
                     'Content-Type': 'text/html'
                 })

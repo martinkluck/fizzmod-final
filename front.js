@@ -1,10 +1,13 @@
 let form = document.getElementById('register-form')
 form.addEventListener('submit',function(e){
     e.preventDefault();
-    console.log(e);
     fetch("http://localhost:8000/users", {
         method: 'POST',
-        body: new FormData(e.target)
+        body: JSON.stringify({username:form.username.value,firstname:form.firstname.value,lastname:form.lastname.value,email:form.email.value}),
+        headers: new Headers({
+            'Accept': 'application/json, application/xml, text/plain, text/html, *.*',
+            'content-type': "x-www-form-urlencode"
+        })
     })
     .then(data => {
             console.log(data);
