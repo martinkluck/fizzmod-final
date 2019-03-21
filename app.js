@@ -35,6 +35,7 @@ const server = http.createServer((req, res) => {
         }
         if(url == '/users'){
             fetch('http://localhost:9000')
+            .then(res => res.json())
             .then(data=>{
                 console.log(data);
             })
@@ -46,7 +47,7 @@ const server = http.createServer((req, res) => {
     if(method === 'POST'){
         // console.log(Url.parse(url, true))
         if (url == '/users') {
-            let result = '';
+            let result = ''
             req.on('data', chunk => {
                 result = chunk.toString()
             })
@@ -58,17 +59,21 @@ const server = http.createServer((req, res) => {
                         },
                         body: result
                     })
+                    .then(res => res.json())
                     .then(data => {
                         console.log(data);
+                        res.writeHead(200, {
+                            'Content-Type': 'application/json'
+                        })
+                        res.end(JSON.stringify(data))
                     })
                     .catch(error => {
                         console.log(error)
+                        res.writeHead(500, {
+                            'Content-Type': 'application/json'
+                        })
+                        res.end(JSON.stringify(error))
                     })
-                console.log(parse(result))
-                res.writeHead(200, {
-                    'Content-Type': 'text/html'
-                })
-                res.end('post received')
             })
         }
     }
