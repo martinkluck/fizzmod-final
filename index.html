@@ -37,7 +37,18 @@
                             </div>
                         </form>
                         <div id="chat" hidden>
-                            yo soy el chat
+                            <div id="chat-messages"></div>
+                            <div id="chat-new-message" class="mt-5">
+                                <form id="chat-form">
+                                    <div class="input-group mb-3">
+                                        <input name="body" id="body" type="text" class="form-control" placeholder="Escriba un mensaje" aria-label="Escriba un mensaje"
+                                            aria-describedby="send-message">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-outline-secondary" type="submit" id="send-message">Enviar</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -43,6 +43,17 @@ const server = http.createServer((req, res) => {
                 console.log(error)
             })
         }
+        if (url == '/messages') {
+            fetch('http://localhost:9001')
+                .then(res => res.json())
+                .then(data => {
+                    console.log(data)
+                    res.end(JSON.stringify(data))
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+        }
     }
     if(method === 'POST'){
         // console.log(Url.parse(url, true))
@@ -53,6 +64,36 @@ const server = http.createServer((req, res) => {
             })
             req.on('end', () => {
                 fetch('http://localhost:9000', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: result
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        console.log(data);
+                        res.writeHead(200, {
+                            'Content-Type': 'application/json'
+                        })
+                        res.end(JSON.stringify(data))
+                    })
+                    .catch(error => {
+                        console.log(error)
+                        res.writeHead(500, {
+                            'Content-Type': 'application/json'
+                        })
+                        res.end(JSON.stringify(error))
+                    })
+            })
+        }
+        if (url == '/messages') {
+            let result = ''
+            req.on('data', chunk => {
+                result = chunk.toString()
+            })
+            req.on('end', () => {
+                fetch('http://localhost:9001', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'

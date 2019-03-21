@@ -44,6 +44,7 @@ const server = http.createServer((req, res) => {
             save = JSON.parse(data.toString())
         })
         req.on('end', function () {
+            console.log(save)
             connection.connect()
             connection.query('INSERT INTO `messages` (`user_id`,`body`,`created_at`,`message_status_id`) values (?,?,?,?)', [save.user_id, save.body, timestamp, 1], function (error, results, fields) {
                 if (error) {

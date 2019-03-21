@@ -60,6 +60,33 @@ const server = http.createServer((req, res) => {
             connection.end()
         })
     }
+    if (method == 'PUT') {
+        let save = ''
+        let date = new Date()
+        let timestamp = date.getFullYear() + '-' + date.getMonth() + '-' + date.getDay() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()
+
+        req.on('data', function (data) {
+            save = JSON.parse(data.toString())
+        })
+        req.on('end', function () {
+            connection.connect()
+            connection.query('INSERT INTO `users` (`username`,`firstname`,`lastname`,`email`,`created_at`,`user_status_id`) values (?,?,?,?,?,?)', [save.username, save.firstname, save.lastname, save.email, timestamp, 1], function (error, results, fields) {
+                if (error) {
+                    console.log(error)
+                    res.writeHead(500, {
+                        "content-type": "application/json"
+                    })
+                    res.end(JSON.stringify(error.message))
+                };
+                console.log(results);
+                res.writeHead(200, {
+                    "content-type": "application/json"
+                })
+                res.end(JSON.stringify(results))
+            })
+            connection.end()
+        })
+    }
 })
 
 server.listen(9000, () => {
