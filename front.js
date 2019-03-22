@@ -3,6 +3,9 @@ let chatForm = document.getElementById('chat-form')
 let logout = document.getElementById('logout')
 let chat = document.getElementById('chat')
 let chatMessages = document.getElementById('chat-messages')
+let socket = io("http://localhost:8000")
+
+
 form.addEventListener('submit',function(e){
     e.preventDefault();
     fetch("http://localhost:8000/users", {
@@ -22,6 +25,7 @@ form.addEventListener('submit',function(e){
             logout.hidden = false
             chat.hidden = false
             loadMessages()
+            newConnection('Usuario')
         })
         .catch(error => {
             console.log(error)
@@ -33,6 +37,7 @@ if (localStorage.getItem('user')) {
     logout.hidden = false
     chat.hidden = false
     loadMessages()
+    newConnection('Usuario')
 }
 
 logout.addEventListener('click',function(e){
@@ -64,7 +69,13 @@ chatForm.addEventListener('submit',function(e){
     e.preventDefault();
     let userId = localStorage.getItem('user')
     console.log(userId)
-    fetch("http://localhost:8000/messages", {
+    socket.emit('newMessage',{
+        status: 'OK',
+        message: chatForm.body.value,
+        user_id: userId
+    })
+    chatForm.reset()
+    /* fetch("http://localhost:8000/messages", {
         method: 'POST',
         body: JSON.stringify({body:chatForm.body.value,user_id:userId}),
         headers: new Headers({
@@ -75,13 +86,16 @@ chatForm.addEventListener('submit',function(e){
     .then(res => res.json())
     .then(data => {
             console.log(data);
-
+            socket.emit("message", {
+                status: "ok",
+                message: chatForm.body.value
+            })
             loadMessage({body:chatForm.body.value})
             chatForm.reset()
         })
         .catch(error => {
             console.log(error)
-        })
+        }) */
 })
 
 function loadMessage(element){
@@ -97,4 +111,26 @@ function loadMessage(element){
     message.appendChild(msjBody)
     message.appendChild(msjFooter)
     chatMessages.append(message)
+}
+
+/* socket.on('neva_con', data => {
+    console.log(data)
+    toastr.info(data.playload)
+}) */
+socket.on('broadcast', data => {
+    console.log(data)
+    toastr.info(data.playload)
+})
+// Recivir
+socket.on("message", data => {
+    console.log(data)
+    loadMessage(data)
+})
+
+function newConnection(params) {
+    // A un solo socket
+    socket.emit("new_con", {
+        status: "ok",
+        playload: `Bienvenido ${params}`
+    })
 }

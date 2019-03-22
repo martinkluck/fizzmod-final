@@ -17,21 +17,46 @@ const server = http.createServer((req, res) => {
         database: 'fizzmod'
     })
     if(method === 'GET'){
-        connection.connect()
-        connection.query('SELECT * FROM `users`', function (error, results, fields) {
-            if (error){
-                console.log(error)
-                res.writeHead(500, 'Internal server Error')
-                res.end(error.message)
-            };
-            console.log(JSON.stringify(results));
-            // let result = new Buffer(results);
-            res.writeHead(200, {
-                "content-type": "text/html"
+        if(url === '/'){
+            connection.connect()
+            connection.query('SELECT * FROM `users`', function (error, results, fields) {
+                if (error) {
+                    console.log(error)
+                    res.writeHead(500, 'Internal server Error')
+                    res.end(error.message)
+                };
+                console.log(JSON.stringify(results));
+                // let result = new Buffer(results);
+                res.writeHead(200, {
+                    "content-type": "text/html"
+                })
+                res.end(JSON.stringify(results))
             })
-            res.end(JSON.stringify(results))
-        })
-        connection.end()
+            connection.end()
+        }
+        if(url === '/get-user'){
+            let id = null
+            req.on('data',function(data){
+                id = JSON.parse(data.toString())
+            })
+            req.on('end',function(){
+                connection.connect()
+                connection.query('SELECT * FROM `users` WHERE id = ?',[id], function (error, results, fields) {
+                    if (error) {
+                        console.log(error)
+                        res.writeHead(500, 'Internal server Error')
+                        res.end(error.message)
+                    };
+                    console.log(JSON.stringify(results));
+                    // let result = new Buffer(results);
+                    res.writeHead(200, {
+                        "content-type": "text/html"
+                    })
+                    res.end(JSON.stringify(results))
+                })
+                connection.end()
+            })
+        }
     }
     if(method == 'POST'){
         let save = ''

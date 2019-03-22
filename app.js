@@ -2,7 +2,7 @@ const http = require('http')
 const fs = require("fs")
 const Url = require("url")
 const fetch = require('node-fetch')
-var { parse } = require('querystring');
+var { parse } = require('querystring')
 
 const server = http.createServer((req, res) => {
     let {
@@ -118,6 +118,70 @@ const server = http.createServer((req, res) => {
             })
         }
     }
+})
+
+const io = require('socket.io')(server)
+
+io.on("connection", socket => {
+    // A un solo socket
+    socket.emit("new_con", {
+        status: "ok",
+        playload: "Bienvenido"
+    })
+    // A Todos los sockets
+    socket.broadcast.emit("broadcast", {
+        status: "ok",
+        playload: "Se conecto un nuevo usuario"
+    })
+
+    socket.on('newMessage',data=>{
+        console.log(data)
+        let d = data
+        let result = JSON.stringify({
+            body: d.message,
+            user_id: d.user_id
+        })
+        fetch('http://localhost:9001', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: result
+            })
+            .then(res => res.json())
+            .then(data => {
+                console.log(data);
+                console.log('Socket',d)
+                socket.broadcast.emit("message",{
+                    status: 'ok',
+                    body: d.message,
+                    user_id: d.user_id
+                })
+                socket.emit("message", {
+                    status: 'ok',
+                    body: d.message,
+                    user_id: d.user_id
+                })
+            })
+            .catch(error => {
+                console.log(error)
+                res.writeHead(500, {
+                    'Content-Type': 'application/json'
+                })
+                res.end(JSON.stringify(error))
+            })
+    })
+
+    socket.on("disconnect", () => {
+        socket.broadcast.emit("broadcast", {
+            status: "ok",
+            playload: "Se desconecto un usuario"
+        })
+        socket.emit("broadcast", {
+            status: "ok",
+            playload: "Chau"
+        })
+    })
 })
 
 server.listen(8000, ()=>{
